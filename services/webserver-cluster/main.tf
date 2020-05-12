@@ -26,6 +26,9 @@ data "template_file" "user_data" {
 }
 
 resource "aws_autoscaling_group" "example" {
+
+  name_prefix = aws_launch_configuration.example.name
+  name = var.cluster_name
   launch_configuration = aws_launch_configuration.example.name
   vpc_zone_identifier  = data.aws_subnet_ids.default.ids
   target_group_arns    = [aws_lb_target_group.asg.arn]
@@ -34,11 +37,6 @@ resource "aws_autoscaling_group" "example" {
   min_size = var.min_size
   max_size = var.max_size
 
-  tag {
-    key                 = "Name"
-    value               = var.cluster_name
-    propagate_at_launch = true
-  }
   tag {
     key                 = "Env"
     value               = "stage"
